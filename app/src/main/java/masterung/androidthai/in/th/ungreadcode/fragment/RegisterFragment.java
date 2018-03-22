@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import masterung.androidthai.in.th.ungreadcode.MainActivity;
 import masterung.androidthai.in.th.ungreadcode.R;
 import masterung.androidthai.in.th.ungreadcode.utility.MyAlert;
+import masterung.androidthai.in.th.ungreadcode.utility.MyConstant;
+import masterung.androidthai.in.th.ungreadcode.utility.PostUserToServer;
 
 /**
  * Created by masterung on 21/3/2018 AD.
@@ -66,8 +69,30 @@ public class RegisterFragment extends Fragment{
                     myAlert.myDialog("Have Space", "Please Fill All Blank");
 
                 } else {
+//                     No space
+                    try{
+                        MyConstant myConstant = new MyConstant();
+                        PostUserToServer postUserToServer = new PostUserToServer(getActivity());
+                        postUserToServer.execute(nameString, userString, passwordString,
+                                myConstant.getUrlPostUserString());
+                        String result = postUserToServer.get();
+                        Log.d("22MarchV1", "Result ==>" + result);
 
-                    // No space
+                        if (Boolean.parseBoolean(result)) {
+
+                            getActivity().getSupportFragmentManager().popBackStack();
+
+                        } else {
+
+                            MyAlert myAlert = new MyAlert(getActivity());
+                            myAlert.myDialog("Cannot Post User", "Please Try Again");
+
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                 }
 
@@ -90,7 +115,6 @@ public class RegisterFragment extends Fragment{
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
